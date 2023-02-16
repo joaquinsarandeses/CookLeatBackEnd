@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Follow;
+use App\Models\Favorite;
+use App\Models\Recipe;
 
 
-class FollowsController extends Controller
+class favoritesController extends Controller
 {
 
-    //DELETE /follow/delete
+    //DELETE /favorite/delete
     public function delete($id){
         $response = [
             "status" => "ok",
@@ -18,11 +19,11 @@ class FollowsController extends Controller
             "data" => ""
         ];
 
-        $follow = Follow::find($id);
+        $favorite = Favorite::find($id);
 
         
-        $follow->delete();
-    }//PUT /follow/create
+        $favorite->delete();
+    }//PUT /favorite/create
     public function create(Request $request){
         $response = [
             "status" => "ok",
@@ -35,13 +36,13 @@ class FollowsController extends Controller
         $datos = json_decode($json);
 
         if($datos){
-            if(isset($datos->follower, $datos->followed)){
-                $follow = new Follow();
-            $follow->follower = $datos->follower;
-            $follow->followed = $datos->followed;
+            if(isset($datos->user_id, $datos->recipe_id)){
+                $favorite = new Favorite();
+            $favorite->user_id = $datos->user_id;
+            $favorite->recipe_id = $datos->recipe_id;
             try{
-                $follow->save();
-                $response["data"] = "ID: $follow->id";
+                $favorite->save();
+                $response["data"] = "ID: $favorite->id";
                 }catch(\Exception $e){
                     $response["status"] = "error al guardar";
                 $response["code"] = 13;
