@@ -34,7 +34,7 @@ Route::prefix('/favourite')->group(function(){
 });
 
 Route::prefix('/users')->group(function(){
-    Route::put('/create',[UsersController::class,'create']); //Crear Users
+    Route::put('/registro',[UsersController::class,'registro']); //Crear Users
     Route::post('/update/{id}',[UsersController::class,'update']); //actualizar Users
     Route::get('/list',[UsersController::class,'list']); //ver lista Users
     Route::get('/list/{id}',[UsersController::class,'show']); //ver user
