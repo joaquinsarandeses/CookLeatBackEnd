@@ -723,3 +723,48 @@
 #50 {main}
 "} 
 [2023-02-27 20:05:39] local.INFO: User registered successfully. {"input":{"name":"Joako","email":"joaquin@gmail.com","password":"Contraseña1234"},"user_id":1} 
+[2023-02-27 21:34:09] local.ERROR: Please provide a valid cache path. {"exception":"[object] (InvalidArgumentException(code: 0): Please provide a valid cache path. at /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/View/Compilers/Compiler.php:66)
+[stacktrace]
+#0 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(101): Illuminate\\View\\Compilers\\Compiler->__construct(Object(Illuminate\\Filesystem\\Filesystem), false, '', true, 'php')
+#1 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Container/Container.php(889): Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}(Object(Illuminate\\Foundation\\Application), Array)
+#2 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Container/Container.php(774): Illuminate\\Container\\Container->build(Object(Closure))
+#3 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(860): Illuminate\\Container\\Container->resolve('blade.compiler', Array, true)
+#4 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Container/Container.php(710): Illuminate\\Foundation\\Application->resolve('blade.compiler', Array)
+#5 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(845): Illuminate\\Container\\Container->make('blade.compiler', Array)
+#6 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Container/Container.php(1437): Illuminate\\Foundation\\Application->make('blade.compiler')
+#7 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/View/ViewServiceProvider.php(164): Illuminate\\Container\\Container->offsetGet('blade.compiler')
+#8 [internal function]: Illuminate\\View\\ViewServiceProvider->Illuminate\\View\\{closure}()
+#9 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/View/Engines/EngineResolver.php(55): call_user_func(Object(Closure))
+#10 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/View/Factory.php(310): Illuminate\\View\\Engines\\EngineResolver->resolve('blade')
+#11 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/View/Factory.php(274): Illuminate\\View\\Factory->getEngineFromPath('/Users/joako/Do...')
+#12 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/View/Factory.php(146): Illuminate\\View\\Factory->viewInstance('errors::404', '/Users/joako/Do...', Array)
+#13 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Routing/ResponseFactory.php(87): Illuminate\\View\\Factory->make('errors::404', Array)
+#14 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(629): Illuminate\\Routing\\ResponseFactory->view('errors::404', Array, 404, Array)
+#15 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(554): Illuminate\\Foundation\\Exceptions\\Handler->renderHttpException(Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#16 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(460): Illuminate\\Foundation\\Exceptions\\Handler->prepareResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#17 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(377): Illuminate\\Foundation\\Exceptions\\Handler->renderExceptionResponse(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#18 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Routing/Pipeline.php(51): Illuminate\\Foundation\\Exceptions\\Handler->render(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#19 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(143): Illuminate\\Routing\\Pipeline->handleException(Object(Illuminate\\Http\\Request), Object(Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException))
+#20 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#21 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#22 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(86): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(180): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#34 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(116): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#35 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(165): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#36 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(134): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#37 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/public/index.php(52): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#38 /Users/joako/Documents/GitHub/CookLeatBackEnd/CookLeat/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(16): require_once('/Users/joako/Do...')
+#39 {main}
+"} 
+[2023-02-27 21:34:57] local.DEBUG: Login request received {"request":{"name":"Joako","password":"Contraseña1234"}} 
+[2023-02-27 21:34:57] local.INFO: User logged in {"username":"Joako"} 

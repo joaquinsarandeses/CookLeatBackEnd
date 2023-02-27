@@ -83,6 +83,52 @@ function registro(Request $request){
     ], 201);
 }     
 
+function login(Request $request){
+    Log::debug('Login request received', ['request' => $request->all()]);
+
+    $json = $request->getContent();
+    $validator =  Validator::make(json_decode($json, true), [
+        'name' => 'required',
+        'password' => 'required',
+    ]);
+
+    if ($validator->fails()) {
+        Log::warning('Validation error', ['errors' => $validator->errors()]);
+        return response()->json([
+            'errors' => $validator->errors(),
+            'message' => 'Ha habido un error validando la información introducida.',
+        ], 422);
+    }else{
+
+    try {
+        $users = User::where('name', $validator->validated()['name'])->firstOrFail();
+        if (!Hash::check($validator->validated()['password'], $users->password)) {
+            Log::warning('Authentication error', ['username' => $validator->validated()['name']]);
+            return response()->json([
+                'message' => 'La contraseña es incorrecta.',
+            ], 400);
+        }
+        $users->tokens()->delete();
+        $token = $users->createToken($users->name)->plainTextToken;
+        Log::info('User logged in', ['username' => $users->name]);
+    } catch (Exception $e) {
+        Log::error('Server error', ['error' => $e->getMessage()]);
+        return response()->json([
+            'message' => 'Ha habido un error con la conexión.',
+        ], 500);
+    }
+    }
+    
+
+    return response()->json([
+        'user' => $users,
+        'token' => $token,
+        'message' => 'Te has logueado correctamente.',
+    ], 201);
+}
+
+
+
 //POST /users/update/ID
 public function update(Request $request, $id){
         $response = [
