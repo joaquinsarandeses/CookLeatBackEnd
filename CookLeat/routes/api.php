@@ -27,7 +27,7 @@ Route::prefix('/categories')->group(function(){
     Route::delete('/delete',[CategoriesController::class,'delete']); //Crear categoría
 });
 
-Route::prefix('/favourite')->group(function(){
+Route::prefix('/favorite')->group(function(){
     Route::put('/create',[FavoritesController::class,'create']); //Crear relacion 
 
     Route::delete('/delete',[FavoritesController::class,'delete']); //Borrar relacion 
