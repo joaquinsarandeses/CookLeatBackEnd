@@ -11,18 +11,43 @@ class FollowsController extends Controller
 {
 
     //DELETE /follow/delete
-    public function delete($id){
+    public function delete(Request $request){
         $response = [
             "status" => "ok",
             "code" => 200,
             "data" => ""
         ];
 
-        $follow = Follow::find($id);
+        $json = $request->getContent();
 
-        
+        $datos = json_decode($json);
+
+        if($datos){
+            if(isset($datos->follower, $datos->followed)){
+
+        $follow = Follow::where('follower', '=', $datos->follower)
+        ->where('followerd', '=', $datos->followed);
+
+        try{
         $follow->delete();
-    }//PUT /follow/create
+         }catch(\Exception $e){
+            $response["status"] = "error inesperado al eliminar";
+        $response["code"] = 413;
+        }
+
+    } else{
+        $response["status"] = "Faltan parametros";
+        $response["code"] = 415;
+    }
+
+} else {
+    $response["status"] = "JSON incorrecto";
+    $response["code"] = 412;
+}     
+return response()->json($response);
+}
+
+    //PUT /follow/create
     public function create(Request $request){
         $response = [
             "status" => "ok",
@@ -44,16 +69,16 @@ class FollowsController extends Controller
                 $response["data"] = "ID: $follow->id";
                 }catch(\Exception $e){
                     $response["status"] = "error al guardar";
-                $response["code"] = 13;
+                $response["code"] = 413;
                 }
             } else{
                     $response["status"] = "Faltan parametros";
-                    $response["code"] = 15;
+                    $response["code"] = 415;
                 }
     
             } else {
                 $response["status"] = "JSON incorrecto";
-                $response["code"] = 12;
+                $response["code"] = 412;
             }     
             return response()->json($response);
     }
