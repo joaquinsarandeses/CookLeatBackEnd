@@ -26,7 +26,7 @@ class FollowsController extends Controller
             if(isset($datos->follower, $datos->followed)){
 
         $follow = Follow::where('follower', '=', $datos->follower)
-        ->where('followerd', '=', $datos->followed);
+        ->where('followed', '=', $datos->followed);
 
         try{
         $follow->delete();

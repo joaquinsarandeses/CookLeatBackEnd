@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Follow;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 
 class UsersController extends Controller
 {
@@ -27,12 +30,20 @@ class UsersController extends Controller
             "data" => ""
         ];
 
-        $user = Users::find($id);
-        if ($user){
-            $response["data"] = $user;
+        $checkUser = Users::find($id);
+
+        if($checkUser){
+
+        $user = User::select('users.id', 'users.name', 'users.image', 'followed.cnt as follows', 'follower.cnt as followers')
+        ->leftJoin(DB::raw("(select follower, count(*) cnt from Follows where follower = $id) as followed"), 'followed.follower', '=', 'users.id')
+        ->leftJoin(DB::raw("(select followed, count(*) cnt from Follows where followed = $id) as follower"), 'follower.followed', '=', 'users.id')
+        ->where('users.id', '=', $id)
+        ->get();
+
+ 
         } else{
             $response["status"] = "user no existente";
-                $response["code"] = 14;
+                $response["code"] = 414;
 
         }
         return response()->json($response);

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\UsersController;
-use App\Http\Controllers\FollowController;
+use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\RecipesController;
 
 
@@ -33,7 +33,7 @@ Route::prefix('/favourite')->group(function(){
     Route::delete('/delete',[FavoritesController::class,'delete']); //Borrar relacion 
 });
 
-Route::prefix('/users')->group(function(){
+Route::prefix('/user')->group(function(){
     Route::put('/registro',[UsersController::class,'registro']); //Crear Users
     Route::post('/login',[UsersController::class,'login']);
     Route::post('/update/{id}',[UsersController::class,'update']); //actualizar Users
