@@ -75,14 +75,28 @@
                 $datos = json_decode($json);
 
                 if($datos){
-                    if(isset($datos->name, $datos->image, $datos->status, $datos->class)){
+                    if(isset($datos->name, $datos->image, $datos->description, $datos->user, $datos->category)){
+                     $base64Image = $datos->image;
+                     $decodedImage = base64_decode($base64Image);
+
+    // Create a temporary file to store the decoded image
+    $tempFile = tempnam(sys_get_temp_dir(), 'image');
+
+    // Write the decoded image to the temporary file
+    file_put_contents($tempFile, $decodedImage);
+
+    // Create a new UploadedFile instance from the temporary file
+    $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $datos->name);
+
+     // Store the file in storage/app/public/images directory
+     $path = $uploadedFile->store('public/images');
 
                     $recipe = new Recipe();
                     $recipe->name = $datos->name;
                     $recipe->description = $datos->description;
-                    $recipe->image = $datos->image;
-                    $recipe->user_id = $datos->user_id;
-                    $recipe->category_id = $datos->category_id;
+                    $recipe->image = $path;
+                    $recipe->user_id = $datos->user;
+                    $recipe->category_id = $datos->category;
                     
 
                     try{
