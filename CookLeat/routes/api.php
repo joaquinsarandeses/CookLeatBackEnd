@@ -29,7 +29,6 @@ Route::prefix('/categories')->group(function(){
 
 Route::prefix('/favorite')->group(function(){
     Route::put('/create',[FavoritesController::class,'create']); //Crear relacion 
-
     Route::delete('/delete',[FavoritesController::class,'delete']); //Borrar relacion 
 });
 
@@ -43,7 +42,6 @@ Route::prefix('/user')->group(function(){
 
 Route::prefix('/follow')->group(function(){
     Route::put('/create',[FollowsController::class,'create']); //Crear relacion 
-
     Route::delete('/delete',[FollowsController::class,'delete']); //Borrar relacion 
 });
 
@@ -51,6 +49,7 @@ Route::prefix('/follow')->group(function(){
 Route::prefix('/recipe')->group(function(){
     Route::put('/create',[RecipesController::class,'create']); //Crear receta
     Route::get('/list',[RecipesController::class,'list']); //ver lista receta
+    Route::get('/favorite/{id}',[RecipesController::class,'favorite']); //ver lista receta
     Route::get('/list/{id}',[RecipesController::class,'show']); //ver receta
     Route::delete('/delete',[RecipesController::class,'delete']); //Crear receta
 });

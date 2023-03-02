@@ -6,8 +6,8 @@
         
         class RecipesController extends Controller
         {
-             //GET /recipes/list?filtros
-             public function list(Request $request){
+             //GET /recipe/list?filtros
+             public function filter(Request $request){
                 if($request->has('category_id')){
                     if($request->has('name')){
                         $recipe = Recipe::join('categories', 'recipes.category_id', '=', 'categories.id')
@@ -34,7 +34,7 @@
                 return $recipe;
         }
         
-            //GET /recipes/list/ID
+            //GET /recipe/list/ID
             public function show($id){
                 $response = [
                     "status" => "ok",
@@ -55,14 +55,14 @@
 
 
             
-            //DELETE /recipes/delete
+            //DELETE /recipe/delete
             public function delete($id){
                 $recipe = Recipe::find($id);
                 $recipe->delete();
         
             }
 
-            //PUT /recipes/create
+            //PUT /recipe/create
             public function create(Request $request){
                 $response = [
                     "status" => "ok",
@@ -79,17 +79,17 @@
                      $base64Image = $datos->image;
                      $decodedImage = base64_decode($base64Image);
 
-    // Create a temporary file to store the decoded image
-    $tempFile = tempnam(sys_get_temp_dir(), 'image');
+                    // Create a temporary file to store the decoded image
+                    $tempFile = tempnam(sys_get_temp_dir(), 'image');
 
-    // Write the decoded image to the temporary file
-    file_put_contents($tempFile, $decodedImage);
+                    // Write the decoded image to the temporary file
+                    file_put_contents($tempFile, $decodedImage);
 
-    // Create a new UploadedFile instance from the temporary file
-    $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $datos->name);
+                    // Create a new UploadedFile instance from the temporary file
+                    $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $datos->name);
 
-     // Store the file in storage/app/public/images directory
-     $path = $uploadedFile->store('public/images');
+                    // Store the file in storage/app/public/images directory
+                    $path = $uploadedFile->store('public/images');
 
                     $recipe = new Recipe();
                     $recipe->name = $datos->name;
@@ -116,5 +116,54 @@
                     $response["code"] = 12;
                 }     
                 return response()->json($response);
-     }           
+     }          
+     
+     
+     //GET recipe/favorite/id
+     public function favorite($id){
+        $response = [
+            "status" => "ok",
+            "code" => 200,
+            "data" => ""
+        ];
+        $favorites = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture')
+        ->join('favorites', 'recipes.id', '=', 'favorites.recipe_id')
+        ->join('users', 'users.id', '=', 'favorites.user_id')
+        ->where('favorites.user_id', $id)
+        ->get();
+
+        if($favorites->isNotEmpty()){
+            foreach ($favorites as $favorite) { 
+                $recipeRoute = $favorite['image'];
+                $recipePath = storage_path('app/' . $recipeRoute);
+                if (!file_exists($recipePath)) {
+                    return response()->json(['message' => 'Image not found'], 404);
+                 // return $recipePath;
+                } else{
+                    $file = file_get_contents($recipePath);
+                    $encodedData = base64_encode($file);
+                   // $encodedData = str_replace('+', '-', $encodedData);
+                   // $encodedData = str_replace('/', '_', $encodedData);
+                   // $encodedData = rtrim($encodedData, '=');
+                    $favorite['image'] = base64_encode($file);
+                   // return $favorite;
+                }
+                if (isset($userRoute)){
+                    $userRoute = $favorite['profilePicture'];
+                    $userPath = storage_path('app/' . $userRoute);
+                if (!file_exists($userPath)) {
+                    return response()->json([
+                        'message' => 'Image not found'
+                    ], 404);
+                } else{
+                    $favorite['profilePicture'] = file($userPath);
+                    
+                }
+                }
+         }
+        } else {
+
+        }
+        return $favorites;
+     }
 }
