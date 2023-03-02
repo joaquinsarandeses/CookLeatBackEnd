@@ -37,7 +37,7 @@ Route::prefix('/user')->group(function(){
     Route::post('/login',[UsersController::class,'login']);
     Route::post('/update/{id}',[UsersController::class,'update']); //actualizar Users
     Route::get('/list',[UsersController::class,'list']); //ver lista Users
-    Route::get('/list/{id}',[UsersController::class,'show']); //ver user
+    Route::get('/show',[UsersController::class,'show']); //ver user
 });
 
 Route::prefix('/follow')->group(function(){
@@ -49,8 +49,8 @@ Route::prefix('/follow')->group(function(){
 Route::prefix('/recipe')->group(function(){
     Route::put('/create',[RecipesController::class,'create']); //Crear receta
     Route::get('/list',[RecipesController::class,'list']); //ver lista receta
-    Route::get('/favorite/{id}',[RecipesController::class,'favorite']); //ver lista receta
-    Route::get('/list/{id}',[RecipesController::class,'show']); //ver receta
+    Route::get('/favorite',[RecipesController::class,'favorite']); //ver lista receta
+    Route::get('/show',[RecipesController::class,'show']); //ver receta
     Route::delete('/delete',[RecipesController::class,'delete']); //Crear receta
 });
 

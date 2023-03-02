@@ -23,30 +23,53 @@ class UsersController extends Controller
 
     }
 
-    public function show($id){
-        $response = [
-            "status" => "ok",
-            "code" => 200,
-            "data" => ""
-        ];
+    public function show(Request $request){
 
-        $checkUser = Users::find($id);
+        $checkUser = User::find($request->id);
 
-        if($checkUser){
+        if(isset($checkUser)){
 
         $user = User::select('users.id', 'users.name', 'users.image', 'followed.cnt as follows', 'follower.cnt as followers')
-        ->leftJoin(DB::raw("(select follower, count(*) cnt from Follows where follower = $id) as followed"), 'followed.follower', '=', 'users.id')
-        ->leftJoin(DB::raw("(select followed, count(*) cnt from Follows where followed = $id) as follower"), 'follower.followed', '=', 'users.id')
-        ->where('users.id', '=', $id)
+        ->leftJoin(DB::raw("(select follower, count(*) cnt from Follows where follower = $request->id) as followed"), 'followed.follower', '=', 'users.id')
+        ->leftJoin(DB::raw("(select followed, count(*) cnt from Follows where followed = $request->id) as follower"), 'follower.followed', '=', 'users.id')
+        ->where('users.id', '=', $request->id)
         ->get();
-
+        $userRoute = $user['image'];
+        $userPath = storage_path('app/' . $userRoute);
+        if (!file_exists($recipePath)) {
+            return response()->json(['message' => 'Image not found'], 404);
+         // return $recipePath;
+        } else{
+            $file = file_get_contents($userPath);
+            $encodedData = base64_encode($file);
+           // $encodedData = str_replace('+', '-', $encodedData);
+           // $encodedData = str_replace('/', '_', $encodedData);
+           // $encodedData = rtrim($encodedData, '=');
+            $user['image'] = base64_encode($file);
+           // return $favorite;
+        }
  
         } else{
-            $response["status"] = "user no existente";
-                $response["code"] = 414;
+            return response()->json([
+                'message' => 'ID no encontrada'
+            ], 404);
 
         }
-        return response()->json($response);
+        foreach ($user as $profile) { 
+            if(is_null($profile["followers"])){
+                $profile["followers"] = 0;
+            }
+            if(is_null($profile["follows"])){
+                $profile["follows"] = 0;
+            }
+        return response()->json([
+            'username' => $profile["name"],
+            'followers' => $profile["followers"],
+            'follows' => $profile["follows"],
+            'image' => $profile["image"],
+            'message' => 'Usuario obtenido con éxito'
+        ], 200);
+    }
     }
 
 //PUT /users/registro
@@ -141,40 +164,62 @@ function login(Request $request){
 
 
 //POST /users/update/ID
-public function update(Request $request, $id){
-        $response = [
-            "status" => "ok",
-            "code" => 200,
-            "data" => ""
-        ];
+public function update(Request $request){
 
-        $json = $request->getContent();
+
+   
 
         $datos = json_decode($json);
 
         if($datos){
+            if(isset($datos->image, $datos->id)){
+
             $user = User::find($id);
-            if ($user){
-                if(isset($datos->image)){
-                        $response["status"] = "imagen actualizada correctamente";
-                        $user->image = $datos->image;               
-            }
+            if (isset($user)){
+ 
+                        $base64Image = $datos->image;
+                     $decodedImage = base64_decode($base64Image);
+
+                    // Create a temporary file to store the decoded image
+                    $tempFile = tempnam(sys_get_temp_dir(), 'image');
+
+                    // Write the decoded image to the temporary file
+                    file_put_contents($tempFile, $decodedImage);
+
+                    // Create a new UploadedFile instance from the temporary file
+                    $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $datos->name);
+
+                    // Store the file in storage/app/public/images directory
+                    $path = $uploadedFile->store('public/images');       
+                    
+                    $recipe->image = $path;
+            
             
                 try{
                 $user->save();
                 }catch(\Exception $e){
-                    $response["status"] = "error al guardar";
-                $response["code"] = 13;
+                    return response()->json([
+                        'message' => 'error al guardar'
+                    ], 400);
                 }
-            }else {
-                $response["status"] = "user no existente";
-                $response["code"] = 14;
+            } else {
+                return response()->json([
+                    'message' => 'usuario inexistentes'
+                ], 400);
+            }
+            } else {
+            return response()->json([
+                'message' => 'Parametros incorrectos'
+            ], 400);
             }
         
         } else {
-            $response["status"] = "JSON incorrecto";
-            $response["code"] = 12;
+            return response()->json([
+                'message' => 'JSON incorrecto'
+            ], 400);
         }
-        return response()->json($response);
+        return response()->json([
+            'message' => 'Imagen actualizada con éxito'
+        ], 200);
     }
 }
