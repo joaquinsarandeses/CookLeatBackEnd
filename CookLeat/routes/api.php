@@ -23,7 +23,6 @@ use App\Http\Controllers\RecipesController;
 
 Route::prefix('/categories')->group(function(){
     Route::get('/list',[CategoriesController::class,'list']); //ver lista categorías
-    Route::get('/list/{id}',[CategoriesController::class,'show']); //ver categoría
     Route::delete('/delete',[CategoriesController::class,'delete']); //Crear categoría
 });
 
@@ -35,7 +34,7 @@ Route::prefix('/favorite')->group(function(){
 Route::prefix('/user')->group(function(){
     Route::put('/registro',[UsersController::class,'registro']); //Crear Users
     Route::post('/login',[UsersController::class,'login']);
-    Route::post('/update/{id}',[UsersController::class,'update']); //actualizar Users
+    Route::post('/update',[UsersController::class,'update']); //actualizar Users
     Route::get('/list',[UsersController::class,'list']); //ver lista Users
     Route::get('/show',[UsersController::class,'show']); //ver user
 });
