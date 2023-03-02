@@ -91,7 +91,7 @@ function registro(Request $request){
     }
     return response()->json([
         'message' => ['Te has registrado :D.']
-    ], 201);
+    ], 200);
 }     
 
 function login(Request $request){
@@ -135,7 +135,7 @@ function login(Request $request){
         'user' => $users,
         'token' => $token,
         'message' => 'Te has logueado correctamente.',
-    ], 201);
+    ], 200);
 }
 
 
