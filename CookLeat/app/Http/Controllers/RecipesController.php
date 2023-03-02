@@ -3,6 +3,9 @@
         
         use Illuminate\Http\Request;
         use App\Models\Recipe;
+        use App\Models\User;
+        use App\Models\Favorite;
+        use App\Models\Category;
         
         class RecipesController extends Controller
         {
@@ -35,22 +38,26 @@
         }
         
             //GET /recipe/list/ID
-            public function show($id){
-                $response = [
-                    "status" => "ok",
-                    "code" => 10,
-                    "data" => ""
-                ];
+            public function show(Request $request){
 
-                $recipe = Recipe::find($id);
-                if ($recipe){
-                    $response["data"] = $recipe;
+                $checkRecipe = Recipe::find($request->id);
+
+                if(isset($checkRecipe)){
+                    $recipe = Recipe::select('recipes.name', 'recipes.description', 'recipes.image', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
+                    ->join('users', 'users.id', '=', 'recipes.user_id')
+                    ->join('categories', 'categories.id', '=', 'recipes.category_id')
+                    ->where('recipes.id', $request->id)
+                    ->get();
                 } else{
-                    $response["status"] = "receta no existente";
-                        $response["code"] = 14;
-
+                    return response()->json([
+                        'message' => 'Receta no encontrada'
+                    ], 404);
                 }
-                return response()->json($response);
+                return $recipe;
+                return response()->json([
+                    'message' => 'Image not found',
+                    'recipe' => $recipe
+                ], 200);
             }
 
 
@@ -64,12 +71,6 @@
 
             //PUT /recipe/create
             public function create(Request $request){
-                $response = [
-                    "status" => "ok",
-                    "code" => 10,
-                    "data" => ""
-                ];
-
                 $json = $request->getContent();
 
                 $datos = json_decode($json);
@@ -103,29 +104,34 @@
                     $recipe->save();
                     $response["data"] = "ID: $recipe->id";
                     }catch(\Exception $e){
-                        $response["status"] = "error al guardar";
-                    $response["code"] = 13;
+                        return response()->json([
+                            'message' => 'error al guardar'
+                        ], 400);
                     }
                 } else{
-                        $response["status"] = "Faltan parametros";
-                        $response["code"] = 15;
+                        return response()->json([
+                            'message' => 'Faltan paramétros'
+                        ], 400);
                     }
 
                 } else {
-                    $response["status"] = "JSON incorrecto";
-                    $response["code"] = 12;
+                    return response()->json([
+                        'message' => 'Formato JSON incorrecto'
+                    ], 400);
                 }     
-                return response()->json($response);
+                return response()->json([
+                    'message' => 'Receta creada con éxito'
+                ], 200);
      }          
      
      
      //GET recipe/favorite/id
-     public function favorite($id){
-        $response = [
-            "status" => "ok",
-            "code" => 200,
-            "data" => ""
-        ];
+     public function favorite(Request $request){
+        $checkRecipe = User::find($request->id);
+
+        if(isset($checkRecipe)){
+
+
         $favorites = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture')
         ->join('favorites', 'recipes.id', '=', 'favorites.recipe_id')
         ->join('users', 'users.id', '=', 'favorites.user_id')
@@ -162,8 +168,11 @@
                 }
          }
         } else {
-
+            //Consulta general de recetas
         }
-        return $favorites;
+    }
+    return response()->json([
+        'favorites' => $favorites
+    ], 200);
      }
 }
