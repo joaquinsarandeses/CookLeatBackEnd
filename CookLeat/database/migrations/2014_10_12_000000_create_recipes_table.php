@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->string('image');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')

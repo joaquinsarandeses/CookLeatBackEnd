@@ -35,16 +35,15 @@ class FavoritesController extends Controller
             $response["status"] = "error inesperado al eliminar";
         $response["code"] = 413;
         }
-
     } else{
         $response["status"] = "Faltan parametros";
         $response["code"] = 415;
     }
-
 } else {
     $response["status"] = "JSON incorrecto";
     $response["code"] = 412;
-}     
+}
+
 return response()->json($response);
     }
     
@@ -84,4 +83,5 @@ return response()->json($response);
             //return response()->json($response);
             return $favorite;
     }
+
 }
