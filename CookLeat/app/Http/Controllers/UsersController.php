@@ -36,7 +36,7 @@ class UsersController extends Controller
         ->get();
         $userRoute = $user['image'];
         $userPath = storage_path('app/' . $userRoute);
-        if (!file_exists($recipePath)) {
+        if (!file_exists($userPath)) {
             return response()->json(['message' => 'Image not found'], 404);
          // return $recipePath;
         } else{
