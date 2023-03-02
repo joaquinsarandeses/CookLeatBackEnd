@@ -23,16 +23,16 @@ class UsersController extends Controller
 
     }
 
-    public function show(Request $request){
+    public function show($id){
 
-        $checkUser = User::find($request->id);
+        $checkUser = User::find($id);
 
         if(isset($checkUser)){
 
         $user = User::select('users.id', 'users.name', 'users.image', 'followed.cnt as follows', 'follower.cnt as followers')
-        ->leftJoin(DB::raw("(select follower, count(*) cnt from Follows where follower = $request->id) as followed"), 'followed.follower', '=', 'users.id')
-        ->leftJoin(DB::raw("(select followed, count(*) cnt from Follows where followed = $request->id) as follower"), 'follower.followed', '=', 'users.id')
-        ->where('users.id', '=', $request->id)
+        ->leftJoin(DB::raw("(select follower, count(*) cnt from Follows where follower = $id) as followed"), 'followed.follower', '=', 'users.id')
+        ->leftJoin(DB::raw("(select followed, count(*) cnt from Follows where followed = $id) as follower"), 'follower.followed', '=', 'users.id')
+        ->where('users.id', '=', $id)
         ->get();
        
  

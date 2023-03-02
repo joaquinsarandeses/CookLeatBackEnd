@@ -38,15 +38,15 @@
         }
         
             //GET /recipe/list/ID
-            public function show(Request $request){
+            public function show($id){
 
-                $checkRecipe = Recipe::find($request->id);
+                $checkRecipe = Recipe::find($id);
 
                 if(isset($checkRecipe)){
                     $recipe = Recipe::select('recipes.name', 'recipes.description', 'recipes.image', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
                     ->join('users', 'users.id', '=', 'recipes.user_id')
                     ->join('categories', 'categories.id', '=', 'recipes.category_id')
-                    ->where('recipes.id', $request->id)
+                    ->where('recipes.id', $id)
                     ->get();
                 } else{
                     return response()->json([

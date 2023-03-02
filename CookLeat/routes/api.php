@@ -36,7 +36,7 @@ Route::prefix('/user')->group(function(){
     Route::post('/login',[UsersController::class,'login']);
     Route::post('/update',[UsersController::class,'update']); //actualizar Users
     Route::get('/list',[UsersController::class,'list']); //ver lista Users
-    Route::get('/show',[UsersController::class,'show']); //ver user
+    Route::get('/show/{id}',[UsersController::class,'show']); //ver user
 });
 
 Route::prefix('/follow')->group(function(){
