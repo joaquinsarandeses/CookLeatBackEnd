@@ -80,4 +80,58 @@ class FollowsController extends Controller
                 'message' => 'Ahora sigues a este usuario'
             ], 200);
     }
+
+    public function followers($id){
+        $checkUser = User::find($id);
+
+        if(isset($checkUser)){
+
+            $user = User::select('users.id', 'users.name', 'users.profilePicture', 'followed.cnt as follows', 'follower.cnt as followers')
+            ->join('follows', 'users.id', '=', 'follows.follower')
+            ->where('follows.followed', '=', $id)
+            ->get();
+            if($user->isNotEmpty()){
+                $user = getImages($user);
+            } else {
+                return response()->json([
+                    'message' => 'No tienes seguidores'
+                ], 200);
+            } 
+        } else{
+            return response()->json([
+                'message' => 'ID no encontrada'
+            ], 404);
+        }
+        return response()->json([
+            'message' => 'Seguidores obtenidos con éxito',
+            'followers' => $user
+        ], 200);
+    }
+
+    public function follows($id){
+        $checkUser = User::find($id);
+
+        if(isset($checkUser)){
+
+            $user = User::select('users.id', 'users.name', 'users.profilePicture', 'followed.cnt as follows', 'follower.cnt as followers')
+            ->join('follows', 'users.id', '=', 'follows.follower')
+            ->where('follows.follower', '=', $id)
+            ->get();
+            if($user->isNotEmpty()){
+                $user = getImages($user);
+            } else {
+                return response()->json([
+                    'message' => 'No sigues a nadie'
+                ], 200);
+            } 
+        } else{
+            return response()->json([
+                'message' => 'ID no encontrada'
+            ], 404);
+        }
+        return response()->json([
+            'message' => 'Gente que sigues obtenida con éxito',
+            'followers' => $user
+        ], 200);
+    }
 }
