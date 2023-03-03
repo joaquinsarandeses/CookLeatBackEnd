@@ -10,6 +10,7 @@ return array(
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\CategoriesController' => $baseDir . '/app/Http/Controllers/CategoriesController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
+    'App\\Http\\Controllers\\FavoritesController' => $baseDir . '/app/Http/Controllers/FavoritesController.php',
     'App\\Http\\Controllers\\FollowsController' => $baseDir . '/app/Http/Controllers/FollowsController.php',
     'App\\Http\\Controllers\\RecipesController' => $baseDir . '/app/Http/Controllers/RecipesController.php',
     'App\\Http\\Controllers\\UsersController' => $baseDir . '/app/Http/Controllers/UsersController.php',

@@ -17,12 +17,24 @@
                         ->select('recipes.id', 'recipes.name', 'recipes.image', 'categories.name AS category', 'recipes.created_at')
                         ->where('recipes.category_id', $request->input('category_id'))
                         ->where('recipes.name', 'LIKE', '%'.$request->input('name').'%')
-                        ->get();
+                        ->get();                      
+                        if($recipe->IsNotEmpty()){
+                            $recipe = getImages($recipe);
+                        } else {
+                            $recipe = Recipe::all();
+                            $recipe = getImages($recipe);
+                        }
                     } else {
                         $recipe = Recipe::join('categories', 'recipes.category_id', '=', 'categories.id')
                         ->select('recipes.id', 'recipes.name', 'recipes.image', 'categories.name AS category', 'recipes.created_at')
                         ->where('recipes.category_id', $request->input('category_id'))
                         ->get();
+                        if($recipe->IsNotEmpty()){
+                            $recipe = getImages($recipe);
+                        } else {
+                            $recipe = Recipe::all();
+                            $recipe = getImages($recipe);
+                        }
                     }
                 } else{
                     if($request->has('name')){
@@ -30,11 +42,20 @@
                         ->select('recipes.id', 'recipes.name', 'recipes.image', 'categories.name AS category', 'recipes.created_at')
                         ->where('recipes.name', 'LIKE', '%'.$request->input('name').'%')
                         ->get();
+                        if($recipe->IsNotEmpty()){
+                            $recipe = getImages($recipe);
+                        } else {
+                            $recipe = Recipe::all();
+                            $recipe = getImages($recipe);
+                        }
                     } else {
                 $recipe = Recipe::all();
+                $recipe = getImages($recipe);
                 }
             }
-                return $recipe;
+            return response()->json([
+                'finder' => $recipe
+            ], 200);
         }
         
             //GET /recipe/list/ID
@@ -43,19 +64,24 @@
                 $checkRecipe = Recipe::find($id);
 
                 if(isset($checkRecipe)){
+                    try{
                     $recipe = Recipe::select('recipes.name', 'recipes.description', 'recipes.image', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
                     ->join('users', 'users.id', '=', 'recipes.user_id')
                     ->join('categories', 'categories.id', '=', 'recipes.category_id')
                     ->where('recipes.id', $id)
                     ->get();
+                    $recipe = getImages($recipe);
+                    } catch (Exception $e) {
+                        return response()->json([
+                            'message' => 'Fallo al obtener receta'
+                        ], 404);
+                    }
                 } else{
                     return response()->json([
                         'message' => 'Receta no encontrada'
                     ], 404);
                 }
-                return $recipe;
                 return response()->json([
-                    'message' => 'Image not found',
                     'recipe' => $recipe
                 ], 200);
             }
@@ -126,53 +152,66 @@
      
      
      //GET recipe/favorite/id
-     public function favorite(Request $request){
-        $checkRecipe = User::find($request->id);
+     public function favorite($id){
+        $checkUser = User::find($id);
 
-        if(isset($checkRecipe)){
+        if(isset($checkUser)){
 
 
-        $favorites = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture')
+        $favorites = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
         ->join('favorites', 'recipes.id', '=', 'favorites.recipe_id')
-        ->join('users', 'users.id', '=', 'favorites.user_id')
+        ->join('users', 'users.id', '=', 'recipes.user_id')
+        ->join('categories', 'categories.id', '=', 'recipes.category_id')
         ->where('favorites.user_id', $id)
         ->get();
 
         if($favorites->isNotEmpty()){
-            foreach ($favorites as $favorite) { 
-                $recipeRoute = $favorite['image'];
-                $recipePath = storage_path('app/' . $recipeRoute);
-                if (!file_exists($recipePath)) {
-                    return response()->json(['message' => 'Image not found'], 404);
-                 // return $recipePath;
-                } else{
-                    $file = file_get_contents($recipePath);
-                    $encodedData = base64_encode($file);
-                   // $encodedData = str_replace('+', '-', $encodedData);
-                   // $encodedData = str_replace('/', '_', $encodedData);
-                   // $encodedData = rtrim($encodedData, '=');
-                    $favorite['image'] = base64_encode($file);
-                   // return $favorite;
-                }
-                if (isset($userRoute)){
-                    $userRoute = $favorite['profilePicture'];
-                    $userPath = storage_path('app/' . $userRoute);
-                if (!file_exists($userPath)) {
-                    return response()->json([
-                        'message' => 'Image not found'
-                    ], 404);
-                } else{
-                    $favorite['profilePicture'] = file($userPath);
-                    
-                }
-                }
-         }
+            $favorites = getImages($favorites);
         } else {
-            //Consulta general de recetas
+            $favorites = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
+            ->join('users', 'users.id', '=', 'recipes.user_id')
+            ->join('categories', 'categories.id', '=', 'recipes.category_id')
+        ->orderBy('id', 'desc')
+        ->limit(10)
+        ->get();
+        if($favorites->isNotEmpty()){
+            $favorites = getImages($favorites);
+        } else {
+            return response()->json([
+                'message' => "No hay ninguna receta creada"
+            ], 400);
         }
+        }
+        } else{
+            return response()->json([
+                'message' => "fallo al obtener el usuario"
+            ], 400);
+        }
+            return response()->json([
+                'favorites' => $favorites
+            ], 200);
     }
-    return response()->json([
-        'favorites' => $favorites
-    ], 200);
-     }
+
+     //GET recipe/recent/id
+     public function recent(){
+
+        $recent = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
+            ->join('users', 'users.id', '=', 'recipes.user_id')
+            ->join('categories', 'categories.id', '=', 'recipes.category_id')
+        ->orderBy('id', 'desc')
+        ->limit(8)
+        ->get();
+
+        if($recent->isNotEmpty()){
+            $recent = getImages($recent);
+        } else {
+            return response()->json([
+                'message' => 'No hay recetas creadas'
+            ], 404);
+        }
+        
+        return response()->json([
+            'recent' => $recent
+        ], 200);
+    }
 }

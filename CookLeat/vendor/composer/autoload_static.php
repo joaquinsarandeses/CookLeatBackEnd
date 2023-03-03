@@ -33,6 +33,7 @@ class ComposerStaticInit38e05b964ca688209788e73d2768bc93
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        '886d071a0bee5704e724ce874eac6988' => __DIR__ . '/../..' . '/app/Helpers/getImages.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -334,8 +335,8 @@ class ComposerStaticInit38e05b964ca688209788e73d2768bc93
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -503,6 +504,7 @@ class ComposerStaticInit38e05b964ca688209788e73d2768bc93
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\CategoriesController' => __DIR__ . '/../..' . '/app/Http/Controllers/CategoriesController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\FavoritesController' => __DIR__ . '/../..' . '/app/Http/Controllers/FavoritesController.php',
         'App\\Http\\Controllers\\FollowsController' => __DIR__ . '/../..' . '/app/Http/Controllers/FollowsController.php',
         'App\\Http\\Controllers\\RecipesController' => __DIR__ . '/../..' . '/app/Http/Controllers/RecipesController.php',
         'App\\Http\\Controllers\\UsersController' => __DIR__ . '/../..' . '/app/Http/Controllers/UsersController.php',
