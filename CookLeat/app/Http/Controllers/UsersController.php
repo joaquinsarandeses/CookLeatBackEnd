@@ -44,6 +44,7 @@ class UsersController extends Controller
         }
         foreach ($user as $profile) { 
             $userRoute = $profile['image'];
+            if (isset($userRoute)){
             $userPath = storage_path('app/' . $userRoute);
             if (!file_exists($userPath)) {
                 return response()->json(['message' => 'Image not found'], 404);
@@ -51,11 +52,7 @@ class UsersController extends Controller
             } else{
                 $file = file_get_contents($userPath);
                 $encodedData = base64_encode($file);
-               // $encodedData = str_replace('+', '-', $encodedData);
-               // $encodedData = str_replace('/', '_', $encodedData);
-               // $encodedData = rtrim($encodedData, '=');
                 $profile['image'] = base64_encode($file);
-               // return $favorite;
             }
             if(is_null($profile["followers"])){
                 $profile["followers"] = 0;
@@ -70,6 +67,14 @@ class UsersController extends Controller
             'image' => $profile["image"],
             'message' => 'Usuario obtenido con éxito'
         ], 200);
+    } else{
+        return response()->json([
+            'username' => $profile["name"],
+            'followers' => $profile["followers"],
+            'follows' => $profile["follows"],
+            'message' => 'Usuario obtenido con éxito'
+        ], 200);
+    }
     }
     }
 

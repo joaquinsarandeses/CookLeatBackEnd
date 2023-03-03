@@ -48,8 +48,10 @@ Route::prefix('/follow')->group(function(){
 Route::prefix('/recipe')->group(function(){
     Route::put('/create',[RecipesController::class,'create']); //Crear receta
     Route::get('/list',[RecipesController::class,'list']); //ver lista receta
-    Route::get('/favorite',[RecipesController::class,'favorite']); //ver lista receta
-    Route::get('/show',[RecipesController::class,'show']); //ver receta
+    Route::get('/favorite/{id}',[RecipesController::class,'favorite']); //ver lista favoritos
+    Route::get('/recent',[RecipesController::class,'recent']); //ver lista reciente
+    Route::get('/filter',[RecipesController::class,'filter']); //ver lista reciente
+    Route::get('/show/{id}',[RecipesController::class,'show']); //ver receta
     Route::delete('/delete',[RecipesController::class,'delete']); //Crear receta
 });
 
