@@ -12,74 +12,72 @@ class FollowsController extends Controller
 
     //DELETE /follow/delete
     public function delete(Request $request){
-        $response = [
-            "status" => "ok",
-            "code" => 200,
-            "data" => ""
-        ];
+            $json = $request->getContent();
 
-        $json = $request->getContent();
+            $datos = json_decode($json);
 
-        $datos = json_decode($json);
+            if($datos){
+                if(isset($datos->id, $datos->follow)){
 
-        if($datos){
-            if(isset($datos->follower, $datos->followed)){
+            $follow = Follow::where('follower', '=', $datos->id)
+            ->where('followed', '=', $datos->follow);
 
-        $follow = Follow::where('follower', '=', $datos->follower)
-        ->where('followed', '=', $datos->followed);
+            try{
+            $follow->delete();
+            }catch(\Exception $e){
+                return response()->json([
+                    'message' => 'Fallo al dejar de seguir'
+                ], 400);
+            }
 
-        try{
-        $follow->delete();
-         }catch(\Exception $e){
-            $response["status"] = "error inesperado al eliminar";
-        $response["code"] = 413;
+        } else{
+            return response()->json([
+                'message' => 'Parametros incorrectos o insuficientes'
+            ], 403);
         }
 
-    } else{
-        $response["status"] = "Faltan parametros";
-        $response["code"] = 415;
+        } else {
+            return response()->json([
+                'message' => 'Formato de peticion incorrecto'
+            ], 404);
+        }     
+        return response()->json([
+            'message' => 'Ya no sigues a esta persona'
+        ], 200);
     }
-
-} else {
-    $response["status"] = "JSON incorrecto";
-    $response["code"] = 412;
-}     
-return response()->json($response);
-}
 
     //PUT /follow/create
     public function create(Request $request){
-        $response = [
-            "status" => "ok",
-            "code" => 200,
-            "data" => ""
-        ];
 
         $json = $request->getContent();
 
         $datos = json_decode($json);
 
         if($datos){
-            if(isset($datos->follower, $datos->followed)){
+            if(isset($datos->id, $datos->follow)){
                 $follow = new Follow();
-            $follow->follower = $datos->follower;
-            $follow->followed = $datos->followed;
+            $follow->follower = $datos->id;
+            $follow->followed = $datos->follow;
             try{
                 $follow->save();
-                $response["data"] = "ID: $follow->id";
                 }catch(\Exception $e){
-                    $response["status"] = "error al guardar";
-                $response["code"] = 413;
+                    return response()->json([
+                        'message' => 'Fallo al seguir'
+                    ], 404);
                 }
             } else{
-                    $response["status"] = "Faltan parametros";
-                    $response["code"] = 415;
+                return response()->json([
+                    'message' => 'Parametros incorrectos o insuficientes'
+                ], 403);
                 }
     
             } else {
-                $response["status"] = "JSON incorrecto";
-                $response["code"] = 412;
+                return response()->json([
+                    'message' => 'Formato de peticion incorrecto'
+                ], 404);
             }     
-            return response()->json($response);
+            return response()->json([
+                'message' => 'Ahora sigues a este usuario'
+            ], 200);
     }
 }
