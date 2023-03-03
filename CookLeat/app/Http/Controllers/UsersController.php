@@ -29,10 +29,11 @@ class UsersController extends Controller
 
         if(isset($checkUser)){
 
-        $user = User::select('users.id', 'users.name', 'users.image')
-        ->join('follows', 'user.id', '=', 'favorites.recipe_id')
-        ->where('users.id', '=', $id)
-        ->get();
+            $user = User::select('users.id', 'users.name', 'users.image', 'followed.cnt as follows', 'follower.cnt as followers')
+            ->leftJoin(DB::raw("(select follower, count(*) cnt from Follows where follower = $id) as followed"), 'followed.follower', '=', 'users.id')
+            ->leftJoin(DB::raw("(select followed, count(*) cnt from Follows where followed = $id) as follower"), 'follower.followed', '=', 'users.id')
+            ->where('users.id', '=', $id)
+            ->get();
        
  
         } else{
@@ -60,21 +61,21 @@ class UsersController extends Controller
                 $profile["follows"] = 0;
             }
         return response()->json([
-            'username' => $profile["name"],
+            'name' => $profile["name"],
             'followers' => $profile["followers"],
             'follows' => $profile["follows"],
             'image' => $profile["image"],
             'message' => 'Usuario obtenido con éxito'
         ], 200);
-    } else{
-        return response()->json([
-            'username' => $profile["name"],
-            'followers' => $profile["followers"],
-            'follows' => $profile["follows"],
-            'message' => 'Usuario obtenido con éxito'
-        ], 200);
-    }
-    }
+        } else{
+            return response()->json([
+                'name' => $profile["name"],
+                'followers' => $profile["followers"],
+                'follows' => $profile["follows"],
+                'message' => 'Usuario obtenido con éxito'
+            ], 200);
+        }
+        }
     }
 
 //PUT /users/registro
