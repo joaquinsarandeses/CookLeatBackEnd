@@ -42,6 +42,8 @@ Route::prefix('/user')->group(function(){
 Route::prefix('/follow')->group(function(){
     Route::put('/create',[FollowsController::class,'create']); //Crear relacion 
     Route::delete('/delete',[FollowsController::class,'delete']); //Borrar relacion 
+    Route::get('/list/seguidores/{id}',[FollowsController::class,'followers']); //ver lista receta
+    Route::get('/list/seguidos/{id}',[FollowsController::class,'follows']); //ver lista receta
 });
 
 

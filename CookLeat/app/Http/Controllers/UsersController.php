@@ -29,9 +29,8 @@ class UsersController extends Controller
 
         if(isset($checkUser)){
 
-        $user = User::select('users.id', 'users.name', 'users.image', 'followed.cnt as follows', 'follower.cnt as followers')
-        ->leftJoin(DB::raw("(select follower, count(*) cnt from Follows where follower = $id) as followed"), 'followed.follower', '=', 'users.id')
-        ->leftJoin(DB::raw("(select followed, count(*) cnt from Follows where followed = $id) as follower"), 'follower.followed', '=', 'users.id')
+        $user = User::select('users.id', 'users.name', 'users.image')
+        ->join('follows', 'user.id', '=', 'favorites.recipe_id')
         ->where('users.id', '=', $id)
         ->get();
        
@@ -171,13 +170,14 @@ function login(Request $request){
 
 //POST /users/update/ID
 public function update(Request $request){
+    $json = $request->getContent();
 
         $datos = json_decode($json);
 
         if($datos){
             if(isset($datos->image, $datos->id)){
 
-            $user = User::find($id);
+            $user = User::find($datos->id);
             if (isset($user)){
  
                         $base64Image = $datos->image;
@@ -190,7 +190,7 @@ public function update(Request $request){
                     file_put_contents($tempFile, $decodedImage);
 
                     // Create a new UploadedFile instance from the temporary file
-                    $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $datos->name);
+                    $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $user->name);
 
                     // Store the file in storage/app/public/images directory
                     $path = $uploadedFile->store('public/images');       
