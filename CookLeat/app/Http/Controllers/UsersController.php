@@ -196,7 +196,7 @@ public function update(Request $request){
                     // Store the file in storage/app/public/images directory
                     $path = $uploadedFile->store('public/images');       
                     
-                    $recipe->image = $path;
+                    $user->image = $path;
             
             
                 try{
