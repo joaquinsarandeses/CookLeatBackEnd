@@ -174,10 +174,10 @@ function login(Request $request){
         if(isset($checkUser)){
 
 
-        $userRecipes = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
-        ->join('users', 'users.id', '=', 'recipes.user_id')
+        $userRecipes = User::select('recipes.*', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
+        ->join('recipes', 'users.id', '=', 'recipes.user_id')
         ->join('categories', 'categories.id', '=', 'recipes.category_id')
-        ->where('user.id', $id)
+        ->where('users.id', $id)
         ->get();
 
         if($userRecipes->isNotEmpty()){
