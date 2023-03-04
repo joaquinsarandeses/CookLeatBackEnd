@@ -82,30 +82,30 @@ class FollowsController extends Controller
     }
 
     public function followers($id){
-        $checkUser = User::find($id);
+            $checkUser = User::find($id);
 
-        if(isset($checkUser)){
+            if(isset($checkUser)){
 
-            $user = User::select('users.id', 'users.name', 'users.profilePicture', 'followed.cnt as follows', 'follower.cnt as followers')
-            ->join('follows', 'users.id', '=', 'follows.follower')
-            ->where('follows.followed', '=', $id)
-            ->get();
-            if($user->isNotEmpty()){
-                $user = getImages($user);
-            } else {
+                $user = User::select('users.id', 'users.name', 'users.image as profilePicture')
+                ->join('follows', 'users.id', '=', 'follows.followed')
+                ->where('follows.follower', '=', $id)
+                ->get();
+                if($user->isNotEmpty()){
+                    $user = getImages($user);
+                } else {
+                    return response()->json([
+                        'message' => 'No tienes seguidores'
+                    ], 200);
+                } 
+            } else{
                 return response()->json([
-                    'message' => 'No tienes seguidores'
-                ], 200);
-            } 
-        } else{
+                    'message' => 'ID no encontrada'
+                ], 404);
+            }
             return response()->json([
-                'message' => 'ID no encontrada'
-            ], 404);
-        }
-        return response()->json([
-            'message' => 'Seguidores obtenidos con éxito',
-            'followers' => $user
-        ], 200);
+                'message' => 'Seguidores obtenidos con éxito',
+                'followers' => $user
+            ], 200);
     }
 
     public function follows($id){
@@ -113,9 +113,9 @@ class FollowsController extends Controller
 
         if(isset($checkUser)){
 
-            $user = User::select('users.id', 'users.name', 'users.profilePicture', 'followed.cnt as follows', 'follower.cnt as followers')
+            $user = User::select('users.id', 'users.name', 'users.image as profilePicture')
             ->join('follows', 'users.id', '=', 'follows.follower')
-            ->where('follows.follower', '=', $id)
+            ->where('follows.followed', '=', $id)
             ->get();
             if($user->isNotEmpty()){
                 $user = getImages($user);
