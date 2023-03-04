@@ -167,7 +167,36 @@ function login(Request $request){
     ], 200);
 }
 
+    //GET user/userRecipes/id
+    public function userRecipes($id){
+        $checkUser = User::find($id);
 
+        if(isset($checkUser)){
+
+
+        $userRecipes = User::select('recipes.*', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
+        ->join('recipes', 'users.id', '=', 'recipes.user_id')
+        ->join('categories', 'categories.id', '=', 'recipes.category_id')
+        ->where('users.id', $id)
+        ->get();
+
+        if($userRecipes->isNotEmpty()){
+            $userRecipes = getImages($userRecipes);
+        } else {
+
+            return response()->json([
+                'message' => "Este usuario no tiene recetas receta creada"
+            ], 200);
+        }
+        } else{
+            return response()->json([
+                'message' => "fallo al obtener el usuario"
+            ], 400);
+        }
+            return response()->json([
+                'userRecipes' => $userRecipes
+            ], 200);
+    }
 
 //POST /users/update/ID
 public function update(Request $request){
