@@ -7,6 +7,8 @@ use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\FollowsController;
 use App\Http\Controllers\RecipesController;
+use App\Http\Controllers\PasswordsController;
+use App\Mail\RecoverPasswordMailable;
 
 
 /*
@@ -21,10 +23,15 @@ use App\Http\Controllers\RecipesController;
 */
 
 
+Route::prefix('/password')->group(function(){
+    Route::get('/recover',[PasswordsController::class,'recover']); //ver lista categorías
+   // Route::get('/recover', function() { return (new RecoverPasswordMailable("iker", "1234")); });
+});
 Route::prefix('/categories')->group(function(){
     Route::get('/list',[CategoriesController::class,'list']); //ver lista categorías
     Route::delete('/delete',[CategoriesController::class,'delete']); //Crear categoría
 });
+
 
 Route::prefix('/favorite')->group(function(){
     Route::put('/create',[FavoritesController::class,'create']); //Crear relacion 

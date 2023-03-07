@@ -28,3 +28,23 @@ function getImages($array){
  }
 return $array;
 }
+
+function generateRandomString() {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+    
+    // Ensure at least one number, uppercase letter, and lowercase letter
+    $randomString .= rand(0, 9); // at least one number
+    $randomString .= $characters[rand(10, 35)]; // at least one uppercase letter
+    $randomString .= $characters[rand(36, 61)]; // at least one lowercase letter
+    
+    // Fill the rest of the string with random characters
+    for ($i = 0; $i < 5; $i++) {
+      $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    
+    // Shuffle the string to ensure randomness
+    $randomString = str_shuffle($randomString);
+    
+    return $randomString;
+  }
