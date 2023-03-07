@@ -16,9 +16,7 @@ function getImages($array){
         if (isset($userRoute)){
             $userPath = storage_path('app/' . $userRoute);
         if (!file_exists($userPath)) {
-            return response()->json([
-                'message' => 'Image not found'
-            ], 404);
+                $element['profilePicture'] =  'Image not found';
         } else{
             $file = file_get_contents($userPath);
             $element['profilePicture'] = base64_encode($file);

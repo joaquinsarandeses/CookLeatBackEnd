@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Follow;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 
 class FollowsController extends Controller
@@ -86,10 +88,12 @@ class FollowsController extends Controller
 
             if(isset($checkUser)){
 
-                $user = User::select('users.id', 'users.name', 'users.image as profilePicture')
-                ->join('follows', 'users.id', '=', 'follows.followed')
-                ->where('follows.follower', '=', $id)
-                ->get();
+                $user = User::select('users.id', 'users.name', 'users.image as profilePicture',
+            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.follower = $id) as follower_count"),
+            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.followed = $id) as followed_count"))
+            ->join('follows', 'users.id', '=', 'follows.follower')
+            ->where('follows.followed', '=', $id)
+            ->get();
                 if($user->isNotEmpty()){
                     $user = getImages($user);
                 } else {
@@ -113,9 +117,11 @@ class FollowsController extends Controller
 
         if(isset($checkUser)){
 
-            $user = User::select('users.id', 'users.name', 'users.image as profilePicture')
-            ->join('follows', 'users.id', '=', 'follows.follower')
-            ->where('follows.followed', '=', $id)
+            $user = User::select('users.id', 'users.name', 'users.image as profilePicture',
+            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.follower = $id) as follower_count"),
+            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.followed = $id) as followed_count"))
+            ->join('follows', 'users.id', '=', 'follows.followed')
+            ->where('follows.follower', '=', $id)
             ->get();
             if($user->isNotEmpty()){
                 $user = getImages($user);
