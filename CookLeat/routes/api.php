@@ -25,7 +25,6 @@ use App\Mail\RecoverPasswordMailable;
 
 Route::prefix('/password')->group(function(){
     Route::get('/recover',[PasswordsController::class,'recover']); //ver lista categorías
-   // Route::get('/recover', function() { return (new RecoverPasswordMailable("iker", "1234")); });
 });
 Route::prefix('/categories')->group(function(){
     Route::get('/list',[CategoriesController::class,'list']); //ver lista categorías
@@ -36,6 +35,7 @@ Route::prefix('/categories')->group(function(){
 Route::prefix('/favorite')->group(function(){
     Route::put('/create',[FavoritesController::class,'create']); //Crear relacion 
     Route::delete('/delete',[FavoritesController::class,'delete']); //Borrar relacion 
+    Route::get('/check',[FavoritesController::class,'check']); //comprobar relacion 
 });
 
 Route::prefix('/user')->group(function(){
