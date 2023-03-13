@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Follow;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\RecoverPasswordMailable;
+use Illuminate\Support\Facades\Hash;
 
 
 
@@ -28,6 +29,8 @@ class PasswordsController extends Controller
             if($user->isNotEmpty()){
                 $password = generateRandomString();
                 try{
+                    $user[0]->password = Hash::make($password);
+                    $user[0]->save();
                     $mail = Mail::to($datos->email)->send(new RecoverPasswordMailable($user[0]->name, $password));
                     }catch(\Exception $e){
                        return response()->json([

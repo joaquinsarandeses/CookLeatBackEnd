@@ -13,11 +13,6 @@ class FavoritesController extends Controller
 
     //DELETE /favorite/delete
     public function delete(Request $request){
-            $response = [
-                "status" => "ok",
-                "code" => 200,
-                "data" => ""
-            ];
 
             $json = $request->getContent();
 
