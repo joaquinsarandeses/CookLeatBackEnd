@@ -11,10 +11,13 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Aws\S3\S3Client;
+use Illuminate\Support\Facades\Storage;
 
 
 class UsersController extends Controller
 {
+
     ////GET /users/list?filtros
     public function list(){
 
@@ -43,17 +46,6 @@ class UsersController extends Controller
 
         }
         foreach ($user as $profile) { 
-            $userRoute = $profile['image'];
-            if (isset($userRoute)){
-            $userPath = storage_path('app/' . $userRoute);
-            if (!file_exists($userPath)) {
-                return response()->json(['message' => 'Image not found'], 404);
-             // return $recipePath;
-            } else{
-                $file = file_get_contents($userPath);
-                $encodedData = base64_encode($file);
-                $profile['image'] = base64_encode($file);
-            }
             if(is_null($profile["followers"])){
                 $profile["followers"] = 0;
             }
@@ -67,14 +59,7 @@ class UsersController extends Controller
             'image' => $profile["image"],
             'message' => 'Usuario obtenido con éxito'
         ], 200);
-        } else{
-            return response()->json([
-                'name' => $profile["name"],
-                'followers' => $profile["followers"],
-                'follows' => $profile["follows"],
-                'message' => 'Usuario obtenido con éxito'
-            ], 200);
-        }
+        
         }
     }
 
@@ -180,14 +165,11 @@ function login(Request $request){
         ->where('users.id', $id)
         ->get();
 
-        if($userRecipes->isNotEmpty()){
-            $userRecipes = getImages($userRecipes);
-        } else {
-
+        if($userRecipes->isEmpty()){
             return response()->json([
-                'message' => "Este usuario no tiene recetas receta creada"
+                'message' => "Este usuario no tiene recetas creadas"
             ], 200);
-        }
+        } 
         } else{
             return response()->json([
                 'message' => "fallo al obtener el usuario"
@@ -204,28 +186,13 @@ public function update(Request $request){
 
         $datos = json_decode($json);
 
-        if($datos){
-            if(isset($datos->image, $datos->id)){
-
-            $user = User::find($datos->id);
+            $user = User::find($request->id);
             if (isset($user)){
- 
-                        $base64Image = $datos->image;
-                     $decodedImage = base64_decode($base64Image);
-
-                    // Create a temporary file to store the decoded image
-                    $tempFile = tempnam(sys_get_temp_dir(), 'image');
-
-                    // Write the decoded image to the temporary file
-                    file_put_contents($tempFile, $decodedImage);
-
-                    // Create a new UploadedFile instance from the temporary file
-                    $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $user->name);
-
-                    // Store the file in storage/app/public/images directory
-                    $path = $uploadedFile->store('public/images');       
                     
-                    $user->image = $path;
+                    $image_path = 'images/'.$user->id.'/'.$user->name.'pfp';
+                    $image_url = Storage::disk('s3')->put($image_path, base64_decode($request->image), 'public');
+                    $url = Storage::disk('s3')->url($image_path);
+                    $user->image = $url;
             
             
                 try{
@@ -240,19 +207,39 @@ public function update(Request $request){
                     'message' => 'usuario inexistentes'
                 ], 400);
             }
-            } else {
-            return response()->json([
-                'message' => 'Parametros incorrectos'
-            ], 400);
-            }
+        return response()->json([
+            'message' => 'Imagen actualizada con éxito',
+            'test' => $image_path
+        ], 200);
+}
+public function update2(Request $request)
+{
+    $json = $request->getContent();
+    $datos = json_decode($json);
+    $user = User::find($request->id);
+    
+    if (isset($user)) {
+        $folder = "images";
+        $filename = $request->image->getClientOriginalName();
+        $path = Storage::disk('s3')->putFileAs($folder, $request->image, $filename, 'public');
+        $url = Storage::disk('s3')->url($path);
+        $user->image = $url;
         
-        } else {
+        try {
+            $user->save();
+        } catch (\Exception $e) {
             return response()->json([
-                'message' => 'JSON incorrecto'
+                'message' => 'error al guardar'
             ], 400);
         }
+    } else {
         return response()->json([
-            'message' => 'Imagen actualizada con éxito'
-        ], 200);
+            'message' => 'usuario inexistentes'
+        ], 400);
     }
+    
+    return response()->json([
+        'message' => 'Imagen actualizada con éxito'
+    ], 200);
+}
 }

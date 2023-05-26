@@ -6,6 +6,8 @@
         use App\Models\User;
         use App\Models\Favorite;
         use App\Models\Category;
+        use Aws\S3\S3Client;
+        use Illuminate\Support\Facades\Storage;
         
         class RecipesController extends Controller
         {
@@ -23,9 +25,7 @@
                     $recipe->where('recipes.name', 'LIKE', '%'.$request->input('name').'%');
                  }
                  $recipe = $recipe->get();                    
-                        if($recipe->isNotEmpty()){
-                            $recipe = getImages($recipe);
-                        } else {
+                        if($recipe->isEmpty()){
                             return response()->json([
                                 'message' => "No hay recetas disponibles"
                             ], 404);
@@ -43,12 +43,11 @@
 
                     if(isset($checkRecipe)){
                         try{
-                        $recipe = Recipe::select('recipes.name', 'recipes.description', 'recipes.image', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
+                        $recipe = Recipe::select('recipes.name', 'recipes.description', 'recipes.id as recipe_id', 'recipes.image', 'users.name as user', 'users.id as user_id', 'users.image as profilePicture', 'categories.name as category')
                         ->join('users', 'users.id', '=', 'recipes.user_id')
                         ->join('categories', 'categories.id', '=', 'recipes.category_id')
                         ->where('recipes.id', $id)
                         ->get();
-                        $recipe = getImages($recipe);
                         } catch (Exception $e) {
                             return response()->json([
                                 'message' => 'Fallo al obtener receta'
@@ -69,10 +68,10 @@
                     $recipe = Recipe::find($id);
                     $recipe->delete();
             
-                }
+            }
 
             
-                //PUT /recipe/create
+            //PUT /recipe/create
              public function create(Request $request){
                     $json = $request->getContent();
 
@@ -80,25 +79,16 @@
 
                     if($datos){
                         if(isset($datos->name, $datos->image, $datos->description, $datos->user, $datos->category)){
-                        $base64Image = $datos->image;
-                        $decodedImage = base64_decode($base64Image);
 
-                        // Create a temporary file to store the decoded image
-                        $tempFile = tempnam(sys_get_temp_dir(), 'image');
-
-                        // Write the decoded image to the temporary file
-                        file_put_contents($tempFile, $decodedImage);
-
-                        // Create a new UploadedFile instance from the temporary file
-                        $uploadedFile = new \Illuminate\Http\UploadedFile($tempFile, $datos->name);
-
-                        // Store the file in storage/app/public/images directory
-                        $path = $uploadedFile->store('public/images');
+                            $image_path = 'images/'.$datos->user.'/'.$datos->name.'recipe';
+                            $image_url = Storage::disk('s3')->put($image_path, base64_decode($request->image), 'public');
+                            $url = Storage::disk('s3')->url($image_path);
+                            $datos->image = $url;
 
                         $recipe = new Recipe();
                         $recipe->name = $datos->name;
                         $recipe->description = $datos->description;
-                        $recipe->image = $path;
+                        $recipe->image = $url;
                         $recipe->user_id = $datos->user;
                         $recipe->category_id = $datos->category;
                         
@@ -141,18 +131,14 @@
                 ->where('favorites.user_id', $id)
                 ->get();
 
-                if($favorites->isNotEmpty()){
-                    $favorites = getImages($favorites);
-                } else {
-                    $favorites = Recipe::select('recipes.*', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
+                if($favorites->isEmpty()){
+                    $favorites = Recipe::select('recipes.*', 'users.id as user_id', 'users.name as user', 'users.image as profilePicture', 'categories.name as category')
                     ->join('users', 'users.id', '=', 'recipes.user_id')
                     ->join('categories', 'categories.id', '=', 'recipes.category_id')
                 ->orderBy('id', 'desc')
                 ->limit(10)
                 ->get();
-                if($favorites->isNotEmpty()){
-                    $favorites = getImages($favorites);
-                } else {
+                if($favorites->isEmpty()){
                     return response()->json([
                         'message' => "No hay ninguna receta creada"
                     ], 400);
@@ -178,9 +164,7 @@
                 ->limit(8)
                 ->get();
 
-                if($recent->isNotEmpty()){
-                    $recent = getImages($recent);
-                } else {
+                if($recent->isEmpty()){
                     return response()->json([
                         'message' => 'No hay recetas creadas'
                     ], 404);
@@ -200,12 +184,10 @@
                     ->orderBy('id', 'desc')
                 ->get();
 
-                if($list->isNotEmpty()){
-                    $list = getImages($list);
-                } else {
+                if($list->isEmpty()){
                     return response()->json([
                         'message' => 'No hay recetas creadas'
-                    ], 404);
+                    ], 200);
                 }
                 
                 return response()->json([

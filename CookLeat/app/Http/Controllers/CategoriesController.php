@@ -29,15 +29,19 @@ class CategoriesController extends Controller
 
     //GET /categories/list/
     public function list(){
-        $response = [
-            "status" => "ok",
-            "code" => 200,
-            "data" => ""
-        ];
 
         $category = Category::all();
 
-        $response["data"] = $category;
+        if($category->isNotEmpty()){
+            return response()->json([
+                'message' => 'Categorias devuelta con éxito',
+                'categories' => $category
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'No hay categorias creadas'
+            ], 404);
+        }
     }
 
     //DELETE /categories/delete

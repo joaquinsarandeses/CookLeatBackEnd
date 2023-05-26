@@ -24,7 +24,7 @@ function getImages($array){
         }
         }
  }
-return $array;
+    return $array;
 }
 
 function generateRandomString() {

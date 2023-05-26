@@ -88,15 +88,11 @@ class FollowsController extends Controller
 
             if(isset($checkUser)){
 
-                $user = User::select('users.id', 'users.name', 'users.image as profilePicture',
-            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.follower = $id) as follower_count"),
-            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.followed = $id) as followed_count"))
+                $user = User::select('users.id', 'users.name', 'users.image as profilePicture')
             ->join('follows', 'users.id', '=', 'follows.follower')
             ->where('follows.followed', '=', $id)
             ->get();
-                if($user->isNotEmpty()){
-                    $user = getImages($user);
-                } else {
+                if($user->isEmpty()){
                     return response()->json([
                         'message' => 'No tienes seguidores'
                     ], 200);
@@ -117,15 +113,11 @@ class FollowsController extends Controller
 
         if(isset($checkUser)){
 
-            $user = User::select('users.id', 'users.name', 'users.image as profilePicture',
-            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.follower = $id) as follower_count"),
-            DB::raw("(SELECT COUNT(*) FROM follows WHERE follows.followed = $id) as followed_count"))
+            $user = User::select('users.id', 'users.name', 'users.image as profilePicture')
             ->join('follows', 'users.id', '=', 'follows.followed')
             ->where('follows.follower', '=', $id)
             ->get();
-            if($user->isNotEmpty()){
-                $user = getImages($user);
-            } else {
+            if($user->isEmpty()){
                 return response()->json([
                     'message' => 'No sigues a nadie'
                 ], 200);
@@ -137,7 +129,7 @@ class FollowsController extends Controller
         }
         return response()->json([
             'message' => 'Gente que sigues obtenida con éxito',
-            'followers' => $user
+            'followeds' => $user
         ], 200);
     }
 }
